@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class TextFieldCustom extends StatelessWidget {
-  TextFieldCustom({super.key});
+  final ValueChanged<String> onValue;
+
+  TextFieldCustom({super.key, required this.onValue});
 
   final inputDecoration = UnderlineInputBorder(
       borderRadius: BorderRadius.circular(20),
@@ -19,6 +21,7 @@ class TextFieldCustom extends StatelessWidget {
       onFieldSubmitted: (value) {
         nodeFocus.requestFocus();
         textController.clear();
+        onValue(value);
       },
       decoration: InputDecoration(
           enabledBorder: inputDecoration,
@@ -26,8 +29,8 @@ class TextFieldCustom extends StatelessWidget {
           filled: true,
           suffixIcon: IconButton(
               onPressed: () {
+                onValue(textController.value.text);
                 textController.clear();
-                print(textController.text);
                 nodeFocus.requestFocus();
               },
               icon: const Icon(Icons.send_outlined))),

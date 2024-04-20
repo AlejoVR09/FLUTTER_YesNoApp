@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yesno/domain/entities/message.dart';
+import 'package:yesno/screen/presentation/provider/MessageProvider.dart';
 import 'package:yesno/screen/presentation/shared/text_field.dart';
 import 'package:yesno/screen/presentation/widgets/her_message_bubble.dart';
 import 'package:yesno/screen/presentation/widgets/message_bubble.dart';
@@ -30,6 +33,7 @@ class ChatBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final chatProvider = context.watch<MessageProvider>();
     return SafeArea(
         child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -37,14 +41,16 @@ class ChatBody extends StatelessWidget {
         children: [
           Expanded(
               child: ListView.builder(
-            itemCount: 100,
+                controller: chatProvider.scrollController,
+            itemCount: chatProvider.messages.length,
             itemBuilder: (context, index) {
-              return index % 2 == 0
-                  ? const MessageBubble()
-                  : const HerMessageBubble();
+              final message = chatProvider.messages[index];
+              return message.who == Whos.her 
+                  ?  HerMessageBubble(message: message.text, urlimage: message.image)
+                  :  MessageBubble(message: message.text,);
             },
           )),
-          TextFieldCustom()
+          TextFieldCustom(onValue: chatProvider.sendMessage)
         ],
       ),
     ));
